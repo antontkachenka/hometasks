@@ -1,0 +1,31 @@
+#!/usr/bin/python
+list1 = [0,1]
+list2 = ['a','b','c']
+
+#Solving without function:
+
+#a = len(list1)
+#b = len(list2)
+#c = a - b
+#if a > b:
+#    while c >0:
+#        list2.append('none')
+#        c -= 1
+#print ("Dict:")
+#print(dict(zip(list1, list2)))
+
+#Solving with function:
+
+def dict1(list1,list2):
+    a = len(list1)
+    b = len(list2)
+    c = a - b
+    if a > b:
+        while c > 0:
+            list2.append('none')
+            c -= 1
+    return dict(zip(list1,list2))
+
+print ("Dict:")
+print(dict1(list1,list2))
+
