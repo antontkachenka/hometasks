@@ -1,22 +1,26 @@
 #!/usr/bin/python
 
-#import libreries
+
+# import libraries
 import psutil
 import datetime
 import time
 import schedule
 import json
-import configparser, os.path, re
+import configparser
+import os.path
+import re
 
-#set global variables
+# set global variables
 config = configparser.ConfigParser()
 config.read('setting.ini')
 output_type = config.get('common', 'output')
 interval = config.get('common', 'interval')
-ss=0
-a=psutil.Process()
+ss = 0
+a = psutil.Process()
 
-#function, which displays info to the json file.
+
+# function, which displays info to the json file.
 def log():
     global ss
     ss += 1
@@ -26,14 +30,17 @@ def log():
         'CPU load': psutil.cpu_percent(interval=1, percpu=True),
         'memory usage': a.memory_percent()*100,
         'virtual memory usage': psutil.virtual_memory(),
-        'IO information': [psutil.disk_io_counters()[2],psutil.disk_io_counters()[3]],
+        'IO information': [psutil.disk_io_counters()[2],
+                           psutil.disk_io_counters()[3]],
         'Network information': psutil.net_if_addrs()
     }
     data = ['SNAPSHOT' + str(ss) + ": " + str(st) + ": ", snapshot]
     with open("test.json", "a") as f:
         json.dump(data, f, indent=3, sort_keys=True)
+        f.close()
 
-#function, which displays info to the txt file.
+
+# function, which displays info to the txt file.
 def log2():
     global ss
     ss += 1
@@ -49,11 +56,11 @@ def log2():
     f.write('\n' + str(psutil.net_if_addrs()))
     f.close()
 
-#check variables in setting.ini and choose wich function will be run.
+# check variables in setting.ini and choose which function will be run.
 if output_type == "json":
     schedule.every(int(interval)).minutes.do(log)
-    #check existing file and number of last snapshot
-    if os.path.isfile("test.json") == True:
+    # check existing file and number of last snapshot
+    if os.path.isfile("test.json") is True:
         fl = open("test.json", "r").read()
         ss = int(re.compile(r'SNAPSHOT(\d+)').findall(fl)[-1])
     else:
@@ -61,7 +68,7 @@ if output_type == "json":
 elif output_type == "txt":
     schedule.every(int(interval)).minutes.do(log2)
     # check existing file and number of last snapshot
-    if os.path.isfile("test.txt") == True:
+    if os.path.isfile("test.txt") is True:
         fl = open("test.txt", "r").read()
         ss = int(re.compile(r'SNAPSHOT (\d+)').findall(fl)[-1])
     else:
@@ -72,4 +79,3 @@ else:
 
 while True:
     schedule.run_pending()
-
